@@ -1,0 +1,64 @@
+body {
+  font-family: sans-serif;
+}
+
+/**
+ * Classic Advanced CSS Debugging Tool:
+* {outline: 1px solid green;}
+ */
+
+input[type="text"]
+  {
+  display: block;
+  min-width: 75vw;
+  margin-bottom: 0.5rem;
+  }
+
+input[type="radio"]
+	{
+	margin: 0px 1rem 0px 0px;
+	}
+
+fieldset
+	{
+	margin-left: 2rem;
+	}
+
+li
+  {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap:1rem;
+  margin-block: 0.5rem;
+  padding: 5px;
+  margin: 0px 0px 0px -2rem;
+  list-style: disc;
+  }
+li:nth-of-type(2n-1)
+  {
+  background-color: beige;
+  }
+
+li div:nth-child(1)
+  {
+    width: 50vw;
+  }
+/* li div:nth-child(3)
+  {
+  justify-self: flex-end;
+  background-color: red;
+  } */
+
+li:hover
+	{
+	background-color: rgba(200,200,200,.5);
+	}
+*:focus {outline: 2px groove greenyellow;}
+
+
+
+.random_scramble
+	{
+	font-family: monospace;
+	}
