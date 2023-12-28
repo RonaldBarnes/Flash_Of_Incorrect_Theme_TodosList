@@ -89,6 +89,18 @@ export default function App()
 			done: false,
       date: Date.now() - Math.floor(Math.random() * 10000),
 		},
+		{
+			name: "On mobile, prevent auto-focus as it pops up keyboard, obscuring list",
+			id: 8679,
+			done: true,
+      date: Date.now() - Math.floor(Math.random() * 10000),
+		},
+		{
+			name: "Themes: light & dark, with auto-detect",
+			id: 6619,
+			done: false,
+      date: Date.now() - Math.floor(Math.random() * 10000),
+		},
     ]);
 
   return (
@@ -191,6 +203,7 @@ function TodosList(props)
 */
 
 
+	const regex = new RegExp(/Android|iOS/);
   function focU()
     {
     // Every render puts focus on input field for new task name:
@@ -198,7 +211,10 @@ function TodosList(props)
     // document.querySelector("#derp")?.focus();
     // document.getElementById("derp")?.focus();
     // console.log("FOCUS")
-    nameRef.current.focus();
+    //
+    // NOT if on mobile: keyboard pops up, covering task list:
+    if (! regex.test(navigator.userAgent) )
+	    nameRef.current.focus();
     }
 // nameRef.current.focus();
 
