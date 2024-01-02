@@ -43,7 +43,7 @@ export default function App()
     },
     {
       name: "Accept task list in props, create default one if not",
-      id: 111,
+      id: 1191,
       done: true,
       date: Date.now() - Math.floor(Math.random() * 10000),
     },
@@ -51,6 +51,12 @@ export default function App()
       name: "Sort on completed + name (or date)",
       done: true,
       id: 1111,
+      date: Date.now() - Math.floor(Math.random() * 10000),
+    },
+    {
+      name: "Sort on none",
+      done: false,
+      id: 2222,
       date: Date.now() - Math.floor(Math.random() * 10000),
     },
     {
