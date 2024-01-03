@@ -140,6 +140,9 @@ function TodosList(props)
 
 	const [sortField,setSortField] = useState("nameAsc");
 
+	// Whether done (finished) items go to end of sorted list:
+	const [sortDoneLast,setSortDoneLast] = useState(true);
+
   function deleteTodo(id)
     {
     setTodos( curr => ( curr.filter(val => (val.id !== id)) ))
@@ -180,33 +183,59 @@ function TodosList(props)
 
   function completeTodo(id)
     {
-    console.log(`completeTodo(${id})`);
+		// Preserve sort order of list:
+		const tempTodos = todos.map( v => {
+			if (v.id === id)
+				{
+				v.done = !v.done;
+				}
+			return v;
+			})	// end .map()
 
-    // Get TODO list item that matches by ID:
-    const updatedTodo = todos.find( v => v.id === id);
-    // Toggle completion status:
-    updatedTodo.done = !updatedTodo.done;
-    console.log(updatedTodo)
-    // Set todo list items to current, filtering current ID, then append updated TODO item:
-    setTodos( curr => [...curr.filter(v => v.id !== id), updatedTodo])
+		setTodos( () => [...tempTodos]);
+
     // Focus back on input field, just in case:
     focU()
     }
 
 
-/*
+
   function sortTodos()
     {
-    setTodos( curr => {
-      const srt = curr.toSorted( (a,b) => (
-        a.done - b.done || a.name.localeCompare(b.name)
-        ))
-      console.log(srt);
-      return srt;
-      })
-    focU();
-    }
-*/
+    // If checkbox is selected to sort first by Done (completed), then
+    // return that status, else return zero indicating no sort:
+    let done = (a,b) => {
+    	return sortDoneLast
+    		? a.done - b.done
+    		: 0
+    	};
+
+		return todos    /* .filter( v => v.done === false) */
+			.toSorted( (a,b) => {
+				if (sortField === "nameAsc")
+//					return a.done - b.done ||
+					return done(a,b) ||
+						a.name.localeCompare(b.name)
+				else if (sortField === "nameDesc")
+					return done(a,b) ||
+						b.name.localeCompare(a.name)
+				else if (sortField === "dateAsc")
+					{
+					return done(a,b) ||
+						a["date"] - b["date"]
+					}
+				else if (sortField === "dateDesc")
+					{
+					return done(a,b) ||
+						b["date"] - a["date"]
+					}
+				else	// Sortation == "none"
+					{
+					return 0
+					}
+				})	// end .toSorted()
+    }	// end sortTodos()
+
 
 
 	const regex = new RegExp(/Android|iOS/);
@@ -269,15 +298,28 @@ function TodosList(props)
 								Sortation field(s)
 							</legend>
 
+							<label>Completed Last {" "}
+		            <input
+		              type="checkbox"
+		              name="sortDoneLast"
+		              id="sortDoneLast"
+		              value="sortDoneLast"
+		              checked={sortDoneLast && "checked"}
+		              onChange={() => {
+		              	setSortDoneLast( curr => !curr );
+		              	focU();
+		              	}}
+		              />
+              </label>
 							<label>Name (asc) {" "}
 		            <input
 		              type="radio"
 		              name="sortField"
-		              id="sortName"
+		              id="sortNameAsc"
 		              value="nameAsc"
 		              checked={sortField === "nameAsc" && "checked"}
 		              onChange={() => {
-		              	setSortField( curr => "nameAsc");
+		              	setSortField( () => "nameAsc");
 		              	focU();
 		              	}}
 		              />
@@ -287,39 +329,53 @@ function TodosList(props)
 		            <input
 		              type="radio"
 		              name="sortField"
-		              id="sortName"
+		              id="sortNameDesc"
 		              value="nameDesc"
 		              checked={sortField === "nameDesc" && "checked"}
 		              onChange={() => {
-		              	setSortField( curr => "nameDesc");
+		              	setSortField( () => "nameDesc");
 		              	focU();
 		              	}}
 		              />
               </label>
 
-							<label>Date (asc)
+							<label>Date (asc) {" "}
 		            <input
 		              type="radio"
 		              name="sortField"
-		              id="sortDate"
+		              id="sortDateAsc"
 		              value="date"
 		              checked={sortField === "dateAsc" && "checked"}
 		              onChange={() => {
-		              	setSortField( curr => "dateAsc");
+		              	setSortField( () => "dateAsc");
 		              	focU();
 		              	}}
 		              />
               </label>
 
-							<label>Date (desc)
+							<label>Date (desc) {" "}
 		            <input
 		              type="radio"
 		              name="sortField"
-		              id="sortDate"
+		              id="sortDateDesc"
 		              value="date"
 		              checked={sortField === "dateDesc" && "checked"}
 		              onChange={() => {
-		              	setSortField( curr => "dateDesc");
+		              	setSortField( () => "dateDesc");
+		              	focU();
+		              	}}
+		              />
+              </label>
+
+							<label>None {" "}
+		            <input
+		              type="radio"
+		              name="sortField"
+		              id="sortNone"
+		              value="none"
+		              checked={sortField === "none" && "checked"}
+		              onChange={() => {
+		              	setSortField( () => "none");
 		              	focU();
 		              	}}
 		              />
@@ -330,28 +386,20 @@ function TodosList(props)
         </form>
       </div>
       <ul>
-        {todos    /* .filter( v => v.done === false) */
-          .toSorted( (a,b) => {
-          	if (sortField === "nameAsc")
-	          	return a.done - b.done ||
-	          		a.name.localeCompare(b.name)
-        		else if (sortField === "nameDesc")
-	          	return a.done - b.done ||
-	          		b.name.localeCompare(a.name)
-        		else if (sortField === "dateAsc")
-	          	return a.done - b.done ||
-	          		a[sortField] - b[sortField]
-        		else
-	          	return a.done - b.done ||
-	          		b.date - a.date
-          	})
+        {sortTodos()
           .map( (val,idx) => {
-          return <OneTodo key={idx} props={val} delFunc={deleteTodo} changeFunc={completeTodo} />
-        })}
+	          return <OneTodo
+	          	key={idx}
+	          	props={val}
+	          	delFunc={deleteTodo}
+	          	changeFunc={completeTodo}
+	          	/>
+  	      })
+	      }
       </ul>
     </div>
-    );
-  }
+    );	// end return()
+  }	// end function TodosList()
 
 
 
@@ -367,6 +415,11 @@ function OneTodo({props, delFunc, changeFunc})
       <div>
         {name} {" "}
       </div>
+      <div>
+      	{new Intl.DateTimeFormat({},
+      		{dateStyle:"medium",timeStyle:"short"})
+      		.format(date)}
+    	</div>
       <div style={{textAlign:"center"}}>
         <label>Done <br />
           <input
@@ -388,7 +441,7 @@ function OneTodo({props, delFunc, changeFunc})
     </li>
     </>
     );	// end return
-  }	// end function App
+  }	// end function OneTodo
 
 
 
