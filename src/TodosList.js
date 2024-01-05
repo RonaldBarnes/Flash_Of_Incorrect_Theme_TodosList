@@ -28,6 +28,11 @@ export default function TodosList(props)
 	// Whether done (finished) items go to end of sorted list:
 	const [sortDoneLast,setSortDoneLast] = useState(true);
 
+  // Theme
+  const [darkTheme,setDarkTheme] = useState(true);
+
+
+
   function deleteTodo(id)
     {
     setTodos( curr => ( curr.filter(val => (val.id !== id)) ))
@@ -138,9 +143,50 @@ export default function TodosList(props)
     }
 // nameRef.current.focus();
 
-	useEffect( () => (
-		nameRef.current.focus()
-		), []);
+
+
+  // Initial render requires some setup:
+  useEffect( () => {
+    nameRef.current.focus();
+
+    // Set state to match browser's preference via CSS setting:
+    if ( window.matchMedia("(prefers-color-scheme: light)").matches)
+      {
+      // console.log(`STARTUP IS LIGHT THEME`);
+      toggleTheme(false);
+      }
+    else
+      {
+      // console.log(`STARTUP IS DARK THEME`);
+      toggleTheme(true);
+      }
+    }, []);
+
+
+
+
+
+  function toggleTheme(wantsDarkTheme)
+    {
+    // Instead of toggle, explicitely add / remove
+    // Trying to avoid FOIT (Flash Of Incorrect Theme):
+    // (See CSS file for explanation)
+    if (wantsDarkTheme === false)
+      {
+      document.querySelectorAll("body, li").forEach( v => {
+        v.classList.add("themeLight")
+        v.classList.remove("themeDark")
+        });
+      }
+    else
+      {
+      document.querySelectorAll("body, li").forEach( v => {
+        v.classList.add("themeDark")
+        v.classList.remove("themeLight")
+        });
+      }
+    setDarkTheme( () => wantsDarkTheme);
+    }
 
 
   return (
@@ -155,7 +201,6 @@ export default function TodosList(props)
       		v.Eleventeen Gazillion
     		</span>
   		</h1>
-
       <div>
         <form onSubmit={addTodo}>
           <input
@@ -266,6 +311,32 @@ export default function TodosList(props)
 		              />
               </label>
           	</fieldset>
+
+            <fieldset style={{display: "inline"}}>
+              <legend>
+                Theme
+              </legend>
+
+              <label>Light {" "}
+                <input
+                  type="radio"
+                  name="theme"
+                  value="lighttheme"
+                  checked={!darkTheme && "checked"}
+                  onChange={() => toggleTheme(false)}
+                  />
+                </label>
+
+              <label>Dark {" "}
+                <input
+                  type="radio"
+                  name="theme"
+                  value="darktheme"
+                  checked={darkTheme && "checked"}
+                  onChange={() => toggleTheme(true)}
+                  />
+                </label>
+            </fieldset>
 
           </div>
         </form>

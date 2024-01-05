@@ -1,6 +1,21 @@
-body {
+
+body
+  {
   font-family: sans-serif;
-}
+  }
+
+:root
+  {
+  color-scheme: dark;
+
+  --fg-color: whitesmoke;
+  --bg-color: #313131;
+  --zebra-dark: darkslategray;
+  --zebra-light: wheat;
+  --zebra-light: beige;
+  --zebra-hover: rgba(200,200,200,.5);
+  --focus: greenyellow;
+  }
 
 /**
  * Classic Advanced CSS Debugging Tool:
@@ -12,6 +27,12 @@ input[type="text"]
   display: block;
   min-width: 75vw;
   margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  }
+
+button
+  {
+  padding: .5rem 1.5rem;
   }
 
 input[type="radio"],
@@ -34,27 +55,21 @@ li
   margin-block: 0.5rem;
   padding: 5px;
   margin: 0px 0px 0px -2rem;
-  list-style: disc;
-  }
-li:nth-of-type(2n-1)
-  {
-  background-color: beige;
+  list-style: none;
+  border-radius: 7px;
   }
 
 li div:nth-child(1)
   {
-    width: 50vw;
+  width: 50%;
   }
-/* li div:nth-child(3)
-  {
-  justify-self: flex-end;
-  background-color: red;
-  } */
 
-li:hover
+li input[type="checkbox"]
 	{
-	background-color: rgba(200,200,200,.5);
+	margin-inline: auto;
 	}
+
+
 *:focus {outline: 2px groove greenyellow;}
 
 
@@ -63,3 +78,106 @@ li:hover
 	{
 	font-family: monospace;
 	}
+
+
+/*
+  THEME SETTINGS BELOW: ALL COLOURS RELATED TO THEMING GO BELOW HERE
+  ------------------------------------------------------------------
+*/
+
+/*
+  Trying to avoid FOIT: Flash Of Incorrect Theme:
+  Requires silly amount of duplication of theme def's, plus
+  adding of themeLight AND removing of themeDark classes in JS...
+
+  This doesn't scale well, but prevents FOIT and it's not problematic
+  to use `document.querySelectorAll("body li...").forEach(...) to
+  add & remove themeLight & themeDark.
+
+  Note: reason for adding & removing both themes:
+  * if user prefers dark theme, `prefers-color-scheme` kicks in and
+    handles that, and adding themeLight class works as toggle.
+  * if user prefers light theme, `prefers-color-scheme` kickes in and
+    handles that, BUT removing themeLight does NOT switch to themeDark.
+  * Hence, BOTH themes need `prefers-color-scheme` to handle initial page
+    load, plus both themes need to be added or removed to achieve
+    correct initial page load plus user toggled behaviour.
+
+  In JS, use something like this:
+    window.matchMedia("(prefers-color-scheme: light)").matches)
+*/
+
+@media (prefers-color-scheme: dark)
+  {
+  body
+    {
+    color-scheme: dark;
+    background-color: var(--bg-color);
+    color: var(--fg-color);
+    }
+  li:nth-of-type(2n-1)
+    {
+    background-color: beige;
+    background-color: var(--zebra-dark, darkslategray);
+    }
+  fieldset
+    {
+    border-color: wheat;
+    }
+  }
+
+@media (prefers-color-scheme: light)
+  {
+  /* Trying to avoid FOIT: Flash Of Incorrect Theme: */
+  body
+    {
+    color-scheme: light;
+    background-color: var(--fg-color, whitesmoke);
+    color: var(--bg-color, #313131);
+    }
+  li:nth-of-type(2n-1)
+    {
+    background-color: var(--zebra-light, beige);
+    background-color: wheat;
+    }
+  li:hover
+    {
+    background-color: var(--zebra-hover);
+    }
+  }
+
+body.themeDark
+  {
+  color-scheme: dark;
+  background-color: var(--bg-color);
+  color: var(--fg-color);
+  }
+li.themeDark:nth-of-type(2n-1)
+  {
+  background-color: var(--zebra-dark, darkslategray);
+  }
+li.themeDark:hover
+  {
+  background-color: var(--zebra-hover);
+  }
+fieldset.themeDark
+  {
+  border-color: wheat;
+  }
+
+
+body.themeLight
+  {
+  color-scheme: light;
+  background-color: var(--fg-color, whitesmoke);
+  color: var(--bg-color, #313131);
+  }
+li.themeLight:nth-of-type(2n-1)
+  {
+  background-color: var(--zebra-light, beige);
+  background-color: wheat;
+  }
+li.themeLight:hover
+  {
+  background-color: var(--zebra-hover);
+  }
