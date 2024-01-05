@@ -4,15 +4,17 @@ import { useState, useEffect, useRef } from "react";
 // Normally, this'd go into its own file, but... this is what I was
 // given to work with (wasn't even a discrete function component!)
 // ... aka ... Not My Fault™
-export default function TodosList(props)
+export default function TodosList({todos, setTodos})
   {
-  // console.log(`props:\n`, props)
-  // Get todos getter & setter from props:
-  let {todos, setTodos} = props;
   // If either is undefined via props, set to state:
   if (todos === undefined || setTodos === undefined)
     {
-    [todos,setTodos] = useState([{name:"no props passed in", id:1, done: false, date: Date.now()}]);
+    let [todos,setTodos] = useState([{
+      name:"no props passed in",
+      id:1,
+      done: false,
+      date: Date.now()
+      }]);
     }
   // console.log(`todos:\n`,todos)
   // console.log(setTodos);
