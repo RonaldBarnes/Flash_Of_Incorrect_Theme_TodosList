@@ -1,0 +1,18 @@
+[Unit]
+Description=React.js Flash Of Incorrect Theme via Yet Another Todo List
+
+After=network.target
+
+[Service]
+User=uid1
+Type=simple
+
+Environment=PORT=3003
+ExecStart=/snap/bin/node node_modules/react-scripts/scripts/start.js
+WorkingDirectory=/home/uid1/Projects/react/Flash_Of_Incorrect_Theme_TodosList/
+
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
